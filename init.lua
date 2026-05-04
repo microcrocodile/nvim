@@ -6,6 +6,7 @@ require('lualine').setup()
 vim.lsp.enable('based')
 vim.lsp.enable('ruff')
 vim.lsp.enable('ra')
+vim.lsp.enable('clangd')
 
 vim.lsp.config('*', {
     capabilities = {
@@ -17,6 +18,16 @@ vim.lsp.config('*', {
 
 vim.cmd("colorscheme dayfox")
 
+local function on_jump(diagnostic, bufnr)
+  if not diagnostic then return end
+
+  vim.diagnostic.show(
+    diagnostic.namespace,
+    bufnr,
+    { diagnostic },
+    { virtual_lines = { current_line = true }, virtual_text = false }
+  )
+end
 
 vim.diagnostic.config({
     severity_sort = true,
@@ -35,24 +46,7 @@ vim.diagnostic.config({
             [vim.diagnostic.severity.HINT] = '󰌶 ',
         },
     },
---    virtual_text = {
---        source = 'if_many',
---        spacing = 2,
---        format = function(diagnostic)
---            local diagnostic_message = {
---                [vim.diagnostic.severity.ERROR] = diagnostic.message,
---                [vim.diagnostic.severity.WARN] = diagnostic.message,
---                [vim.diagnostic.severity.INFO] = diagnostic.message,
---                [vim.diagnostic.severity.HINT] = diagnostic.message,
---            }
---
---            if diagnostic.code == nil then
---                return diagnostic_message[diagnostic.severity]
---            else
---                return string.format('%s: %s', diagnostic.code, diagnostic_message[diagnostic.severity])
---            end
---        end,
---    },
+    jump = { on_jump = on_jump },
 })
 
 local main_group = vim.api.nvim_create_augroup("MyLspAttachHooks", { clear = true })
@@ -75,7 +69,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
             return
         end
 
-        if client.supports_method('textDocument/documentHighlight') then
+        if client:supports_method('textDocument/documentHighlight') then
             local group = vim.api.nvim_create_augroup('highlight_symbol', { clear = false })
 
             vim.api.nvim_clear_autocmds({
@@ -94,7 +88,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
             })
         end
 
-        if client.supports_method('textDocument/inlayHint') then
+        if client:supports_method('textDocument/inlayHint') then
             local methods = vim.lsp.protocol.Methods
             local inlay_hint_handler = vim.lsp.handlers[methods.textDocument_inlayHint]
 
@@ -147,8 +141,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.api.nvim_create_user_command("CommentOut", comment_out, { range = true })
         vim.api.nvim_create_user_command("Uncomment", uncomment, { range = true })
 
-        map('[d', vim.diagnostic.goto_prev, 'Goto Previous Problem')
-        map(']d', vim.diagnostic.goto_next, 'Goto Next Problem')
         map('<C-w>d', vim.diagnostic.open_float, 'Open Float')
         map('<C-s>', vim.lsp.buf.signature_help, 'Help with [S]ignature', { 'i', 's' })
         map('<leader>co', ':CommentOut<CR>', '[Co]mment Out Block', { 'v', 'n' })
