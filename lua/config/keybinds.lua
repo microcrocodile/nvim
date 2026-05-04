@@ -18,3 +18,5 @@ vim.keymap.set('t', '<C-j>', [[<C-\><C-n><C-w>j]])
 vim.keymap.set('t', '<C-k>', [[<C-\><C-n><C-w>k]])
 vim.keymap.set('t', '<C-l>', [[<C-\><C-n><C-w>l]])
 
+--Visual-mode bindings
+vim.keymap.set("v", "<leader>p", "\"_dP", { noremap = true, silent = true })

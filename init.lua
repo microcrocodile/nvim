@@ -141,7 +141,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
         vim.api.nvim_create_user_command("CommentOut", comment_out, { range = true })
         vim.api.nvim_create_user_command("Uncomment", uncomment, { range = true })
 
-        map('<C-w>d', vim.diagnostic.open_float, 'Open Float')
         map('<C-s>', vim.lsp.buf.signature_help, 'Help with [S]ignature', { 'i', 's' })
         map('<leader>co', ':CommentOut<CR>', '[Co]mment Out Block', { 'v', 'n' })
         map('<leader>uc', ':Uncomment<CR>', '[U]n[C]omment Block', { 'v', 'n' })
