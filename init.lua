@@ -5,7 +5,6 @@ require('lualine').setup()
 
 vim.lsp.enable('based')
 vim.lsp.enable('ruff')
-vim.lsp.enable('ra')
 vim.lsp.enable('clangd')
 
 vim.lsp.config('*', {
