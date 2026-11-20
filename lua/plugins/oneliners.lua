@@ -56,5 +56,10 @@ return {
         config = function()
             require('tabout').setup({})
         end
+    },
+    {
+        'sphamba/smear-cursor.nvim',
+        opts = {}
+
     }
 }

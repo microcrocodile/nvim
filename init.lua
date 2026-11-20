@@ -28,6 +28,15 @@ local function on_jump(diagnostic, bufnr)
   )
 end
 
+vim.api.nvim_create_autocmd("BufEnter", {
+    pattern = {"*.md", "*.txt", "*.log"},
+    callback = function()
+        vim.opt_local.wrap = true
+        vim.opt_local.linebreak = true
+        vim.opt_local.breakindent = true
+    end,
+})
+
 vim.diagnostic.config({
     severity_sort = true,
     float = {
@@ -67,6 +76,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
         if client == nil then
             return
         end
+
+        --client.server_capabilities.semanticTokensProvider = nil
 
         if client:supports_method('textDocument/documentHighlight') then
             local group = vim.api.nvim_create_augroup('highlight_symbol', { clear = false })
